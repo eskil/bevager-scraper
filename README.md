@@ -1,0 +1,24 @@
+# BevagerScraper
+
+**TODO: Add description**
+
+## Installation
+
+If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+
+  1. Add `bevager_scraper` to your list of dependencies in `mix.exs`:
+
+    ```elixir
+    def deps do
+      [{:bevager_scraper, "~> 0.1.0"}]
+    end
+    ```
+
+  2. Ensure `bevager_scraper` is started before your application:
+
+    ```elixir
+    def application do
+      [applications: [:bevager_scraper]]
+    end
+    ```
+
