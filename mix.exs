@@ -13,7 +13,7 @@ defmodule BevagerScraper.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison]]
+    [applications: [:logger, :httpotion]]
   end
 
   # Dependencies can be Hex packages:
@@ -27,7 +27,7 @@ defmodule BevagerScraper.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:httpoison, "~> 0.10.0"},
+      {:httpotion, "~> 3.0.2"},
       {:floki, "~> 0.11.0"},
       {:poison, "~> 3.0"}
     ]

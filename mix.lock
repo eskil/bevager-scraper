@@ -2,6 +2,8 @@
   "floki": {:hex, :floki, "0.11.0"},
   "hackney": {:hex, :hackney, "1.6.3"},
   "httpoison": {:hex, :httpoison, "0.10.0"},
+  "httpotion": {:hex, :httpotion, "3.0.2"},
+  "ibrowse": {:hex, :ibrowse, "4.2.2"},
   "idna": {:hex, :idna, "1.2.0"},
   "metrics": {:hex, :metrics, "1.0.1"},
   "mimerl": {:hex, :mimerl, "1.0.2"},

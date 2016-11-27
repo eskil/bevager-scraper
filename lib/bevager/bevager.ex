@@ -1,22 +1,17 @@
 defmodule Bevager do
-  defstruct cookies: nil
+  defstruct cookie: nil
 
   def login(email, password) do
     {:ok, body} = Poison.encode(%{email: email, password: password, programId: 1, referer: "/brg", "rewardsGroupName": "rumbustion"})
     headers = [{"Content-Type", "application/json"}]
-    {:ok, response} = HTTPoison.post("https://www.bevager.com/brg/login", body, headers)
-    cookies = :hackney.cookies(response.headers)
-    %Bevager{cookies: cookies}
+    response = HTTPotion.post("https://www.bevager.com/brg/login", [body: body, headers: headers])
+    cookie = response.headers["set-cookie"]
+    %Bevager{cookie: cookie}
   end
 
-  def load_rum_list_html(%Bevager{cookies: cookies}) do
-    [c] = for {_, v} <- cookies do v end
-    ac = [List.first(c)]
-    IO.inspect ac
-    r = HTTPoison.get("https://www.bevager.com/brg/home?rewardsGroupName=rumbustion",
-                      %{},
-                       hackney: [cookie: ac, follow_redirect: true, force_redirect: true])
-    IO.inspect r
+  def load_rum_list_html(%Bevager{cookie: cookie}) do
+    r = HTTPotion.get("https://www.bevager.com/brg/home?rewardsGroupName=rumbustion",
+                      [headers: [cookie: cookie], timeout: 20000, follow_redirects: true])
+    r.body
   end
-
 end
