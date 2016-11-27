@@ -5,7 +5,7 @@ defmodule BevagerScraper.Mixfile do
     [app: :bevager_scraper,
      version: "0.1.0",
      elixir: "~> 1.3",
-     escript: [main_module: BevagerScraper],
+     escript: [main_module: Main],
      deps: deps()]
   end
 
@@ -28,7 +28,8 @@ defmodule BevagerScraper.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.10.0"},
-      {:floki, "~> 0.11.0"}
+      {:floki, "~> 0.11.0"},
+      {:poison, "~> 3.0"}
     ]
   end
 end
