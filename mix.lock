@@ -1,5 +1,7 @@
 %{"certifi": {:hex, :certifi, "0.7.0"},
+  "combine": {:hex, :combine, "0.9.3"},
   "floki": {:hex, :floki, "0.11.0"},
+  "gettext": {:hex, :gettext, "0.12.1"},
   "hackney": {:hex, :hackney, "1.6.3"},
   "httpoison": {:hex, :httpoison, "0.10.0"},
   "httpotion": {:hex, :httpotion, "3.0.2"},
@@ -9,4 +11,6 @@
   "mimerl": {:hex, :mimerl, "1.0.2"},
   "mochiweb": {:hex, :mochiweb, "2.15.0"},
   "poison": {:hex, :poison, "3.0.0"},
-  "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.1"}}
+  "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.1"},
+  "timex": {:hex, :timex, "3.1.5"},
+  "tzdata": {:hex, :tzdata, "0.1.201605"}}
