@@ -1,6 +1,13 @@
 defmodule Main do
   @moduledoc """
   BevagerScraper scraps bevager.com
+
+  --email=<bevager email>
+  --password=<bevager password>
+  --file=<where to put html>
+  reload to download from bevager.
+
+  Otherwise it just dumps the a list of rums.
   """
 
   def main(args) do
