@@ -76,7 +76,7 @@ defmodule Bevager.Rum do
       is_new: is_new,
       is_historic: is_historic,
       requested_at: requested_at,
-      request_status: nil,
+      request_status: nil, # TODO: fix this
       notes: notes,
       country: country,
       rating: rating
