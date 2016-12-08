@@ -8,10 +8,11 @@ defmodule Bevager.Rum do
 
   defp parse_requested([s]) do
     case Timex.parse(s, "%a, %b %e at %I:%M %p", :strftime) do
-      # Interesting enough, bevager doesn't store the year.
+      # Interesting enough, bevager doesn't store or send down the year.
       {:ok, dt} ->
         case dt.year do
           0 ->
+            # TODO: if month > current month, use current year -1
             {:ok, dt2} = NaiveDateTime.new(2016, dt.month, dt.day, dt.hour, dt.minute, 0)
             dt2
           _ -> dt
@@ -50,11 +51,19 @@ defmodule Bevager.Rum do
   end
 
   def new_from_floki(html) do
+    #IO.inspect html
     children = Floki.find(html, "td")
     {:ok, {"td", _, [p]}} = Enum.fetch(children, 2)
     price = parse_price(p)
 
     {:ok, {"td", _, [{_, _, [country]}]}} = Enum.fetch(children, 0)
+    {:ok, {"td", _, stuff}} = Enum.fetch(children, 3)
+    request_status = case Enum.fetch(stuff, 1) do
+                       {:ok, status} -> String.trim(status)
+                       :error -> nil
+                     end
+
+
 
     class = Floki.attribute(html, "class")
     is_historic = parse_historic(class)
@@ -76,7 +85,7 @@ defmodule Bevager.Rum do
       is_new: is_new,
       is_historic: is_historic,
       requested_at: requested_at,
-      request_status: nil, # TODO: fix this
+      request_status: request_status,
       notes: notes,
       country: country,
       rating: rating
