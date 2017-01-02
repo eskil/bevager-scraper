@@ -27,9 +27,10 @@ defmodule Main do
 
   def process({options, _args, _invalid}) do
     {:ok, html} = File.read(options[:file])
-    rums = Floki.find(html, "tr.item")
-    for rum <- rums do
-      IO.inspect Bevager.Rum.new_from_floki(rum)
+    elements = Floki.find(html, "tr.item")
+    for element <- elements do
+      rum = Bevager.Rum.new_from_floki(element)
+      IO.inspect rum
     end
   end
 

@@ -1,6 +1,7 @@
 defmodule Bevager.Rum do
-  defstruct name: nil, price: nil, is_new: nil, is_historic: nil,
-  requested_at: nil, request_status: nil, notes: nil, country: nil, rating: nil
+  defstruct name: nil, raw_name: nil, price: nil, is_new: nil, is_historic: nil,
+  requested_at: nil, request_status: nil, notes: nil, country: nil,
+  rating: nil, size: nil, immortal: nil
 
   defp parse_requested([""]) do
     nil
@@ -33,6 +34,41 @@ defmodule Bevager.Rum do
     price
   end
 
+  defp parse_is_immortal(name) do
+    is_immortal = String.contains?(name, "Immortal")
+    name = case is_immortal do
+             true -> String.trim(String.replace(name, "Immortal", ""))
+             _ -> name
+           end
+    {is_immortal, name}
+  end
+
+  defp parse_is_new(name) do
+    is_new = String.starts_with?(name, "*")
+    name = case is_new do
+             true -> String.trim_leading(name, "*")
+             _ -> name
+           end
+    {is_new, name}
+  end
+
+  defp parse_size(name) do
+    size = case Regex.match?(~r/1\s?oz/, name) do
+             true -> 1
+             _ -> 2
+           end
+    name = case size == 1 do
+             true ->
+               name |> String.trim_trailing("1 oz")
+                    |> String.trim_trailing("1 oz.")
+                    |> String.trim_trailing("1oz")
+                    |> String.trim_trailing("1oz.")
+                    |> Bevager.Utils.trim_trailing(" -?")
+             _ -> name
+           end
+    {size, name}
+  end
+
   defp parse_notes([{_, _, [notes]}]) do
     m = Regex.named_captures(~r/(?<notes>.*)(?<rating>[0-9].?[0-9]?)\*/U, notes)
     notes = case m["notes"] do
@@ -63,24 +99,22 @@ defmodule Bevager.Rum do
                        :error -> nil
                      end
 
-
-
     class = Floki.attribute(html, "class")
     is_historic = parse_historic(class)
     requested_at = parse_requested(Floki.attribute(html, "data-requested"))
 
-    [{_, _, [name]}] = Floki.find(html, "a.item-name")
-    name = String.trim(name)
-    is_new = String.starts_with?(name, "*")
-    name = case is_new do
-             true -> String.trim_leading(name, "*")
-             _ -> name
-           end
-
+    # TODO: make a parse_new that returns new and name.
+    [{_, _, [raw_name]}] = Floki.find(html, "a.item-name")
+    raw_name = String.trim(raw_name)
+    name = String.replace(raw_name, "  ", " ", global: true)
+    {is_new, name} = parse_is_new(name)
+    {is_immortal, name} = parse_is_immortal(name)
+    {size, name} = parse_size(name)
     {notes, rating} = parse_notes(Floki.find(html, "div.notes"))
 
     %Bevager.Rum{
       name: name,
+      raw_name: raw_name,
       price: price,
       is_new: is_new,
       is_historic: is_historic,
@@ -88,7 +122,9 @@ defmodule Bevager.Rum do
       request_status: request_status,
       notes: notes,
       country: country,
-      rating: rating
+      rating: rating,
+      size: size,
+      immortal: is_immortal
     }
   end
 end
