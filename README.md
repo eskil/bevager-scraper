@@ -54,7 +54,7 @@ First command downloads the html from bevager. Second scrapes it and for now jus
 ## SQL
 
    ```
-   CREATE TABLE IF NOT EXISTS basic_rums (
+   CREATE TABLE IF NOT EXISTS rums.basic_rums (
      `id` int(11) NOT NULL AUTO_INCREMENT,
      `name` VARCHAR(256) NOT NULL,
      `raw_name` VARCHAR(256) NOT NULL,

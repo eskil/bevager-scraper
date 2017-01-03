@@ -23,101 +23,60 @@ defmodule Bevager.Utils do
     )
   end
 
-  def to_key_val(key, value) when is_nil(value) do
+  def to_key_value(key, value) when is_nil(value) do
     "#{key}=NULL"
   end
 
-  def to_key_val(key, value) when is_bitstring(value) do
+  def to_key_value(key, value) when is_bitstring(value) do
     value = String.replace(value, "\"", "\\\"")
     "#{key}=\"#{value}\""
   end
 
+  def to_key_value(key, value) when is_number(value) or is_boolean(value) do
+    "#{key}=#{value}"
+  end
+
+
+  def to_key_value(key, value) do
+    "#{key}=\"#{value}\""
+  end
+
+
+  def to_value(value) when is_nil(value) do
+    "NULL"
+  end
+
+  def to_value(value) when is_bitstring(value) do
+    value = String.replace(value, "\"", "\\\"")
+    "\"#{value}\""
+  end
+
+  def to_value(value) when is_number(value) or is_boolean(value) do
+    "#{value}"
+  end
+
+
+  def to_value(value) do
+    "\"#{value}\""
+  end
 
   def to_upsert(rum) do
     # until I move to ecto...
     iov = ["INSERT INTO rums.basic_rums (name, raw_name, request_status, notes, country, requested_at, rating, size, price, is_new, is_historic, is_immortal) VALUES ("]
     values = []
 
-    # Strings
-    values = values ++ for key <- [:name, :raw_name, :request_status, :notes, :country] do
+    values = values ++ for key <- [:name, :raw_name, :request_status, :notes, :country, :requested_at, :rating, :size, :price, :is_new, :is_historic, :is_immortal] do
       {:ok, value} = Map.fetch(rum, key)
-      case value == nil do
-        true -> "NULL"
-        _ ->
-          value = String.replace(value, "\"", "\\\"")
-          "#{key}=\"#{value}\""
-      end
-    end
-
-    # Dates
-    values = values ++ for key <- [:requested_at] do
-      {:ok, value} = Map.fetch(rum, key)
-      case value == nil do
-        true -> "NULL"
-        _ ->
-          "#{key}=\"#{value}\""
-      end
-    end
-
-    # Numbers
-    values = values ++ for key <- [:rating, :size, :price] do
-      {:ok, value} = Map.fetch(rum, key)
-      case value == nil do
-        true -> "NULL"
-        _ -> "#{value}"
-      end
-    end
-
-    # Bools
-    values = values ++ for key <- [:is_new, :is_historic, :is_immortal] do
-      {:ok, value} = Map.fetch(rum, key)
-      case value do
-        true -> "true"
-        _ -> "false"
-      end
+      to_value(value)
     end
 
     iov = iov ++ [Enum.join(values, ", ")] ++ [")\n"]
     iov = iov ++ ["ON DUPLICATE KEY UPDATE\n"]
     updates = []
 
-    # Strings
-    updates = updates ++ for key <- [:request_status, :notes] do
+    updates = updates ++ for key <- [:request_status, :notes, :requested_at, :is_historic, :is_immortal, :is_new, :rating, :size, :price] do
       {:ok, value} = Map.fetch(rum, key)
-      case value == nil do
-        true -> "#{key}=NULL"
-        _ ->
-          value = String.replace(value, "\"", "\\\"")
-          "#{key}=\"#{value}\""
-      end
-    end
-
-    # Dates
-    updates = updates ++ for key <- [:requested_at] do
-      {:ok, value} = Map.fetch(rum, key)
-      case value == nil do
-        true -> "#{key}=NULL"
-        _ ->
-          "#{key}=\"#{value}\""
-      end
-    end
-
-    # Bools
-    updates = updates ++ for key <- [:is_historic, :is_immortal, :is_new] do
-      {:ok, value} = Map.fetch(rum, key)
-      case value do
-        true -> "#{key}=true"
-        _ -> "#{key}=false"
-      end
-    end
-
-    # Numbers
-    updates = updates ++ for key <- [:rating, :size, :price] do
-      {:ok, value} = Map.fetch(rum, key)
-      case value == nil do
-        true -> "#{key}=NULL"
-        _ -> "#{key}=#{value}"
-      end
+      to_key_value(key, value)
     end
 
     iov = iov ++ [Enum.join(updates, ", ")] ++ [";\n"]
