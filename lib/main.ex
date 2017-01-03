@@ -5,7 +5,10 @@ defmodule Main do
   --email=<bevager email>
   --password=<bevager password>
   --file=<where to put html>
-  reload to download from bevager.
+
+  'reload' to download from bevager.
+  'dump' to parse and dump the html file as structs
+  'sql' to parse and dump the parse html file as sql
 
   Otherwise it just dumps the a list of rums.
   """
@@ -25,12 +28,20 @@ defmodule Main do
     File.write(options[:file], html)
   end
 
-  def process({options, _args, _invalid}) do
+  def process({options, ["dump"], _invalid}) do
+    {:ok, html} = File.read(options[:file])
+    elements = Floki.find(html, "tr.item")
+    for element <- elements do
+      IO.inspect(Bevager.Rum.new_from_floki(element))
+    end
+  end
+
+  def process({options, ["sql"], _invalid}) do
     {:ok, html} = File.read(options[:file])
     elements = Floki.find(html, "tr.item")
     for element <- elements do
       rum = Bevager.Rum.new_from_floki(element)
-      IO.inspect rum
+      IO.write([Bevager.Utils.to_upsert(rum), "\n"])
     end
   end
 

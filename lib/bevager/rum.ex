@@ -1,7 +1,16 @@
 defmodule Bevager.Rum do
-  defstruct name: nil, raw_name: nil, price: nil, is_new: nil, is_historic: nil,
-  requested_at: nil, request_status: nil, notes: nil, country: nil,
-  rating: nil, size: nil, immortal: nil
+  defstruct name: nil,
+    raw_name: nil,
+    price: nil,
+    is_new: nil,
+    is_historic: nil,
+    is_immortal: nil,
+    requested_at: nil,
+    request_status: nil,
+    notes: nil,
+    country: nil,
+    rating: nil,
+    size: nil
 
   defp parse_requested([""]) do
     nil
@@ -118,13 +127,13 @@ defmodule Bevager.Rum do
       price: price,
       is_new: is_new,
       is_historic: is_historic,
+      is_immortal: is_immortal,
       requested_at: requested_at,
       request_status: request_status,
       notes: notes,
       country: country,
       rating: rating,
-      size: size,
-      immortal: is_immortal
+      size: size
     }
   end
 end

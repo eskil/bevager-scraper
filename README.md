@@ -50,3 +50,25 @@ First command downloads the html from bevager. Second scrapes it and for now jus
      price: 70, rating: 4.0, request_status: nil,
       requested_at: ~N[2016-11-28 17:09:00]}
    ```
+
+## SQL
+
+   ```
+   CREATE TABLE IF NOT EXISTS basic_rums (
+     `id` int(11) NOT NULL AUTO_INCREMENT,
+     `name` VARCHAR(256) NOT NULL,
+     `raw_name` VARCHAR(256) NOT NULL,
+     `price` INT(4),
+     `is_new` BOOL DEFAULT FALSE,
+     `is_historic` BOOL DEFAULT FALSE,
+     `is_immortal` BOOL DEFAULT FALSE,
+     requested_at DATETIME DEFAULT NULL,
+     request_status VARCHAR(20) DEFAULT NULL,
+     `notes` VARCHAR(1024) DEFAULT NULL,
+     `country` VARCHAR(128),
+     `rating` FLOAT(2, 1) DEFAULT NULL,
+     `size` INT(4),
+     PRIMARY KEY (`id`),
+     UNIQUE KEY `name` (`name`)
+   );
+   ```
