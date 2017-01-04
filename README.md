@@ -21,6 +21,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
    mix escript.build
    ./bevager_scraper --email=<email> --password=<password> --file=rums.html reload
    ./bevager_scraper --file=rums.html dump
+   ```
 
 First command downloads the html from bevager. Second scrapes it and for now just dumps the rums.
 
