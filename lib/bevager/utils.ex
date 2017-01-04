@@ -63,18 +63,14 @@ defmodule Bevager.Utils do
   def to_upsert(rum) do
     # until I move to ecto...
     iov = ["INSERT INTO rums.basic_rums (name, raw_name, request_status, notes, country, requested_at, rating, size, price, is_new, is_historic, is_immortal) VALUES ("]
-    values = []
-
-    values = values ++ for key <- [:name, :raw_name, :request_status, :notes, :country, :requested_at, :rating, :size, :price, :is_new, :is_historic, :is_immortal] do
+    values = for key <- [:name, :raw_name, :request_status, :notes, :country, :requested_at, :rating, :size, :price, :is_new, :is_historic, :is_immortal] do
       {:ok, value} = Map.fetch(rum, key)
       to_value(value)
     end
 
     iov = iov ++ [Enum.join(values, ", ")] ++ [")\n"]
     iov = iov ++ ["ON DUPLICATE KEY UPDATE\n"]
-    updates = []
-
-    updates = updates ++ for key <- [:request_status, :notes, :requested_at, :is_historic, :is_immortal, :is_new, :rating, :size, :price] do
+    updates = for key <- [:request_status, :notes, :requested_at, :is_historic, :is_immortal, :is_new, :rating, :size, :price] do
       {:ok, value} = Map.fetch(rum, key)
       to_key_value(key, value)
     end

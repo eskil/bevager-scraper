@@ -46,7 +46,10 @@ defmodule Bevager.Rum do
   defp parse_is_immortal(name) do
     is_immortal = String.contains?(name, "Immortal")
     name = case is_immortal do
-             true -> String.trim(String.replace(name, "Immortal", ""))
+             true ->
+               name |> String.replace("Immortal", "")
+                    |> Bevager.Utils.trim_trailing(" -?")
+                    |> String.trim
              _ -> name
            end
     {is_immortal, name}
