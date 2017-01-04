@@ -55,6 +55,7 @@ request_status="M.C", notes=NULL, requested_at="2009-12-08 00:00:00", is_histori
    INSERT INTO rums.basic_rums (name, raw_name, request_status, notes, country, requested_at, rating, size, price, is_new, is_historic, is_immortal) VALUES ("English Harbour 10 year", "English Harbour 10 year", "M.C", "Raisins, \"something scribbles\" but sweet,", "Antigua and Barbuda", "2009-12-08 00:00:00", 3.0, 2, 26, false, true, false)
    ON DUPLICATE KEY UPDATE
    request_status="M.C", notes="Raisins, \"something scribbles\" but sweet,", requested_at="2009-12-08 00:00:00", is_historic=true, is_immortal=false, is_new=false, rating=3.0, size=2, price=26;
+   ```
 
 Which will work with the following table definition.
 
