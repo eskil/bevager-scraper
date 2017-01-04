@@ -14,44 +14,48 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     end
     ```
 
-  2. Ensure `bevager_scraper` is started before your application:
-
-    ```elixir
-    def application do
-      [applications: [:bevager_scraper]]
-    end
-    ```
-
 ## CLI
 
    ```shell
    mix deps.get
    mix escript.build
    ./bevager_scraper --email=<email> --password=<password> --file=rums.html reload
-   ./bevager_scraper --file=rums.html
-   ```
+   ./bevager_scraper --file=rums.html dump
 
 First command downloads the html from bevager. Second scrapes it and for now just dumps the rums.
 
    ```
-   %Bevager.Rum{country: "Saint Lucia", is_historic: false, is_new: false,
-     name: "St. Lucia Distillers 1931 Batch #3",
-     notes: "Very smooth nose, also smooth slightly raisiny palate. Very good.",
-     price: 26, rating: 4.0, request_status: nil,
-     requested_at: ~N[2016-11-22 17:20:00]}
-   %Bevager.Rum{country: "Regional Blends", is_historic: false, is_new: false,
-     name: "Prof. Cornelius Ampleforth's Rumbullion! Spiced Navy Strength Rum 1 oz",
-     notes: "This is a Fairly anis flavoured spiced rum that's very strong too. Not a winning mix.",
-     price: 22, rating: 1.0, request_status: nil,
-     requested_at: ~N[2016-11-22 17:25:00]}
-   %Bevager.Rum{country: "Barbados", is_historic: false, is_new: true,
-     name: "Bristol Classic Fine Barbados Rum 2004 Foursquare 43%",
-     notes: "Pleasant sweet nose. Very nice taste with hint if dark sweetness to it.",
-     price: 70, rating: 4.0, request_status: nil,
-      requested_at: ~N[2016-11-28 17:09:00]}
+   %Bevager.Rum{country: "Guadeloupe", is_historic: true, is_immortal: false,
+     is_new: false, name: "Domaine de Séverin", notes: nil, price: 12, rating: nil,
+     raw_name: "Domaine de Séverin - 1 oz", request_status: "M.C",
+     requested_at: ~N[2009-12-08 00:00:00], size: 1}
+   %Bevager.Rum{country: "Antigua and Barbuda", is_historic: true,
+     is_immortal: false, is_new: false, name: "English Harbour 10 year",
+     notes: "Raisins, \"something scribbles\" but sweet,", price: 26, rating: 3.0,
+     raw_name: "English Harbour 10 year", request_status: "M.C",
+     requested_at: ~N[2009-12-08 00:00:00], size: 2}
    ```
 
 ## SQL
+
+Bevager-scraper has a very simply dump-to-sql upsert feature;
+
+   ```
+   ./bevager_scraper --file=rums.html sql
+   ```
+
+Which generates SQL ala
+
+   ```
+   INSERT INTO rums.basic_rums (name, raw_name, request_status, notes, country, requested_at, rating, size, price, is_new, is_historic, is_immortal) VALUES ("Domaine de Séverin", "Domaine de Séverin - 1 oz", "M.C", NULL, "Guadeloupe", "2009-12-08 00:00:00", NULL, 1, 12, false, true, false)
+ON DUPLICATE KEY UPDATE
+request_status="M.C", notes=NULL, requested_at="2009-12-08 00:00:00", is_historic=true, is_immortal=false, is_new=false, rating=NULL, size=1, price=12;
+
+   INSERT INTO rums.basic_rums (name, raw_name, request_status, notes, country, requested_at, rating, size, price, is_new, is_historic, is_immortal) VALUES ("English Harbour 10 year", "English Harbour 10 year", "M.C", "Raisins, \"something scribbles\" but sweet,", "Antigua and Barbuda", "2009-12-08 00:00:00", 3.0, 2, 26, false, true, false)
+   ON DUPLICATE KEY UPDATE
+   request_status="M.C", notes="Raisins, \"something scribbles\" but sweet,", requested_at="2009-12-08 00:00:00", is_historic=true, is_immortal=false, is_new=false, rating=3.0, size=2, price=26;
+
+Which will work with the following table definition.
 
    ```
    CREATE TABLE IF NOT EXISTS rums.basic_rums (
