@@ -29,7 +29,7 @@ defmodule BevagerScraper.Mixfile do
     [
       {:httpotion, "~> 3.0.2"},
       {:floki, "~> 0.11.0"},
-      {:poison, "~> 3.0"},
+      {:poison, "~> 2.0"},
       {:timex, "~> 3.0"},
       {:tzdata, "~> 0.1.8"}
     ]
