@@ -23,8 +23,8 @@ defmodule Main do
   end
 
   def process({options, ["reload"], _invalid}) do
-    html = Bevager.login(options[:email], options[:password])
-    |> Bevager.load_rum_list_html
+    html = BevagerScraper.login(options[:email], options[:password])
+    |> BevagerScraper.load_rum_list_html
     File.write(options[:file], html)
   end
 
@@ -32,7 +32,7 @@ defmodule Main do
     {:ok, html} = File.read(options[:file])
     elements = Floki.find(html, "tr.item")
     for element <- elements do
-      IO.inspect(Bevager.Rum.new_from_floki(element))
+      IO.inspect(BevagerScraper.Rum.new_from_floki(element))
     end
   end
 
@@ -40,8 +40,8 @@ defmodule Main do
     {:ok, html} = File.read(options[:file])
     elements = Floki.find(html, "tr.item")
     for element <- elements do
-      rum = Bevager.Rum.new_from_floki(element)
-      IO.write([Bevager.Utils.to_upsert(rum), "\n"])
+      rum = BevagerScraper.Rum.new_from_floki(element)
+      IO.write([BevagerScraper.Utils.to_upsert(rum), "\n"])
     end
   end
 

@@ -1,4 +1,4 @@
-defmodule Bevager.Rum do
+defmodule BevagerScraper.Rum do
   defstruct name: nil,
     raw_name: nil,
     price: nil,
@@ -48,7 +48,7 @@ defmodule Bevager.Rum do
     name = case is_immortal do
              true ->
                name |> String.replace("Immortal", "")
-                    |> Bevager.Utils.trim_trailing(" -?")
+                    |> BevagerScraper.Utils.trim_trailing(" -?")
                     |> String.trim
              _ -> name
            end
@@ -75,7 +75,7 @@ defmodule Bevager.Rum do
                     |> String.trim_trailing("1 oz.")
                     |> String.trim_trailing("1oz")
                     |> String.trim_trailing("1oz.")
-                    |> Bevager.Utils.trim_trailing(" -?")
+                    |> BevagerScraper.Utils.trim_trailing(" -?")
              _ -> name
            end
     {size, name}
@@ -124,7 +124,7 @@ defmodule Bevager.Rum do
     {size, name} = parse_size(name)
     {notes, rating} = parse_notes(Floki.find(html, "div.notes"))
 
-    %Bevager.Rum{
+    %BevagerScraper.Rum{
       name: name,
       raw_name: raw_name,
       price: price,

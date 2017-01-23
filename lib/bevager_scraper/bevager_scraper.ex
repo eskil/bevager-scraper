@@ -1,4 +1,4 @@
-defmodule Bevager do
+defmodule BevagerScraper do
   defstruct cookie: nil
 
   def login(email, password) do
@@ -6,10 +6,10 @@ defmodule Bevager do
     headers = [{"Content-Type", "application/json"}]
     response = HTTPotion.post("https://www.bevager.com/brg/login", [body: body, headers: headers])
     cookie = response.headers["set-cookie"]
-    %Bevager{cookie: cookie}
+    %BevagerScraper{cookie: cookie}
   end
 
-  def load_rum_list_html(%Bevager{cookie: cookie}) do
+  def load_rum_list_html(%BevagerScraper{cookie: cookie}) do
     r = HTTPotion.get("https://www.bevager.com/brg/home?rewardsGroupName=rumbustion",
                       [headers: [cookie: cookie], timeout: 20000, follow_redirects: true])
     r.body

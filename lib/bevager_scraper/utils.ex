@@ -1,4 +1,4 @@
-defmodule Bevager.Utils do
+defmodule BevagerScraper.Utils do
   def trim_trailing_acc([head|tail], chars) do
     case head in chars do
       true -> trim_trailing_acc(tail, chars)

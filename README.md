@@ -1,7 +1,8 @@
 # BevagerScraper
 
 This is a library to scrape bevager data using an existing bevager
-login. It only provides read access at this time.
+login. It only provides read access at this time. It's geared for a
+specific purpose, rumbustion society.
 
 It does some specific parsing that fits my style of leaving rum
 tasting notes plus the naming of the rum.
@@ -44,27 +45,32 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 ## As libary
 
    ```elixir
-   elements = Bevager.login(user.email, user.bevager_password)
-   |> Bevager.load_rum_list_html
+   elements = BevagerScraper.login(user.email, user.bevager_password)
+   |> BevagerScraper.load_rum_list_html
    |> Floki.find("tr.item")
    for element <- elements do
-     bevager = Bevager.Rum.new_from_floki(element)
-     IO.inspect bevager
+     rum = BevagerScraper.Rum.new_from_floki(element)
+     IO.inspect rum
    end
    ```
 
 First command downloads the html from bevager. Second scrapes it and for now just dumps the rums.
 
    ```
-   %Bevager.Rum{country: "Guadeloupe", is_historic: true, is_immortal: false,
-     is_new: false, name: "Domaine de Séverin", notes: nil, price: 12, rating: nil,
-     raw_name: "Domaine de Séverin - 1 oz", request_status: "M.C",
-     requested_at: ~N[2009-12-08 00:00:00], size: 1}
-   %Bevager.Rum{country: "Antigua and Barbuda", is_historic: true,
-     is_immortal: false, is_new: false, name: "English Harbour 10 year",
-     notes: "Raisins, \"something scribbles\" but sweet,", price: 26, rating: 3.0,
-     raw_name: "English Harbour 10 year", request_status: "M.C",
+   %BevagerScraper.Rum{country: "Guadeloupe", is_historic: true,
+     is_immortal: false, is_new: false, name: "Domaine de Séverin", notes: nil,
+     price: 12, rating: nil, raw_name: "Domaine de Séverin - 1 oz",
+     request_status: "M.C", requested_at: ~N[2009-12-08 00:00:00], size: 1}
+   %BevagerScraper.Rum{country: "Antigua and Barbuda", is_historic: false,
+     is_immortal: false, is_new: false, name: "English Harbour 25 year 1981",
+     notes: "Mild, minor smoke,", price: 45, rating: 3.5,
+     raw_name: "English Harbour 25 year 1981", request_status: "M.C",
      requested_at: ~N[2009-12-08 00:00:00], size: 2}
+   %BevagerScraper.Rum{country: "Puerto Rico", is_historic: false,
+     is_immortal: true, is_new: false, name: "Don Q Reserva de Familia Serralles",
+     notes: nil, price: 140, rating: nil,
+     raw_name: "Don Q Reserva de Familia Serralles - 1 oz - Immortal",
+     request_status: nil, requested_at: nil, size: 1}
    ```
 
 ## SQL
