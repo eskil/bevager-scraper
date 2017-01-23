@@ -6,10 +6,10 @@ login. It only provides read access at this time.
 It does some specific parsing that fits my style of leaving rum
 tasting notes plus the naming of the rum.
 
-  * If the note ends in "... x[.y]*", x.y is parsed as a rating.
-  * If the name starts with "*", it's considered a new rum.
-  * If name contains "Immortal", it's considered an immortal rum.
-  * It tries to extrac the 1oz/2oz from the name.
+  * If the note ends in _"... x[.y]*"_, x.y is parsed as a rating.
+  * If the name starts with _"*"_, it's considered a new rum.
+  * If name contains _"Immortal"_, it's considered an immortal rum.
+  * It tries to extract the _1oz/2oz_ from the name.
 
 ## Installation
 
