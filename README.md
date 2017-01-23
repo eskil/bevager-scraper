@@ -1,6 +1,15 @@
 # BevagerScraper
 
-**TODO: Add description**
+This is a library to scrape bevager data using an existing bevager
+login. It only provides read access at this time.
+
+It does some specific parsing that fits my style of leaving rum
+tasting notes plus the naming of the rum.
+
+  * If the note ends in "... x[.y]*", x.y is parsed as a rating.
+  * If the name starts with "*", it's considered a new rum.
+  * If name contains "Immortal", it's considered an immortal rum.
+  * It tries to extrac the 1oz/2oz from the name.
 
 ## Installation
 
@@ -21,6 +30,18 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
    mix escript.build
    ./bevager_scraper --email=<email> --password=<password> --file=rums.html reload
    ./bevager_scraper --file=rums.html dump
+   ```
+
+## As libary
+
+   ```elixir
+   elements = Bevager.login(user.email, user.bevager_password)
+   |> Bevager.load_rum_list_html
+   |> Floki.find("tr.item")
+   for element <- elements do
+     bevager = Bevager.Rum.new_from_floki(element)
+     IO.inspect bevager
+   end
    ```
 
 First command downloads the html from bevager. Second scrapes it and for now just dumps the rums.
