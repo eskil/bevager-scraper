@@ -20,7 +20,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
     ```elixir
     def deps do
-      [{:bevager_scraper, git: "git@github.com:eskil/bevager-scraper.git"}]
+      [{:bevager_scraper, git: "https://github.com/eskil/bevager-scraper"}]
     end
     ```
 
@@ -114,3 +114,5 @@ Which will work with the following table definition.
      UNIQUE KEY `name` (`name`)
    );
    ```
+
+for your querying pleasure.
