@@ -9,6 +9,7 @@ defmodule BevagerScraper.Rum do
     request_status: nil,
     notes: nil,
     country: nil,
+    state: nil,
     rating: nil,
     size: nil
 
@@ -81,6 +82,15 @@ defmodule BevagerScraper.Rum do
     {size, name}
   end
 
+  defp parse_state(country, name) when country in ["United States"] do
+    match = Regex.named_captures(~r/(?<name>.*) \((?<state>.*)\)/U, name)
+    {match["state"], match["name"]}
+  end
+
+  defp parse_state(_country, name) do
+    {nil, name}
+  end
+
   defp parse_notes([{_, _, [notes]}]) do
     m = Regex.named_captures(~r/(?<notes>.*)(?<rating>[0-9].?[0-9]?)\*/U, notes)
     notes = case m["notes"] do
@@ -119,6 +129,7 @@ defmodule BevagerScraper.Rum do
     [{_, _, [raw_name]}] = Floki.find(html, "a.item-name")
     raw_name = String.trim(raw_name)
     name = String.replace(raw_name, "  ", " ", global: true)
+    {state, name} = parse_state(country, name)
     {is_new, name} = parse_is_new(name)
     {is_immortal, name} = parse_is_immortal(name)
     {size, name} = parse_size(name)
@@ -135,6 +146,7 @@ defmodule BevagerScraper.Rum do
       request_status: request_status,
       notes: notes,
       country: country,
+      state: state,
       rating: rating,
       size: size
     }
