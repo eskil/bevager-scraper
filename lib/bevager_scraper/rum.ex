@@ -83,8 +83,12 @@ defmodule BevagerScraper.Rum do
   end
 
   defp parse_state(country, name) when country in ["United States"] do
-    match = Regex.named_captures(~r/(?<name>.*) \((?<state>.*)\)/U, name)
-    {match["state"], match["name"]}
+    case Regex.named_captures(~r/(?<name>.*) \((?<state>.*)\)/U, name) do
+      nil ->
+        {nil, name}
+      match ->
+        {match["state"], match["name"]}
+    end
   end
 
   defp parse_state(_country, name) do
