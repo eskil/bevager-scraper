@@ -155,4 +155,11 @@ defmodule BevagerScraper.Rum do
       size: size
     }
   end
+
+  def list_from_html(html) do
+    elements = Floki.find(html, "tr.item")
+    for element <- elements do
+      BevagerScraper.Rum.new_from_floki(element)
+    end
+  end
 end

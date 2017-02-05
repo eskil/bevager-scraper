@@ -30,17 +30,20 @@ defmodule Main do
 
   def process({options, ["dump"], _invalid}) do
     {:ok, html} = File.read(options[:file])
-    elements = Floki.find(html, "tr.item")
-    for element <- elements do
-      IO.inspect(BevagerScraper.Rum.new_from_floki(element))
+    for rum <- BevagerScraper.Rum.list_from_html(html) do
+      IO.inspect rum
     end
+  end
+
+  def process({options, ["user"], _invalid}) do
+    {:ok, html} = File.read(options[:file])
+    user = BevagerScraper.User.new_from_html(html)
+    IO.inspect user
   end
 
   def process({options, ["sql"], _invalid}) do
     {:ok, html} = File.read(options[:file])
-    elements = Floki.find(html, "tr.item")
-    for element <- elements do
-      rum = BevagerScraper.Rum.new_from_floki(element)
+    for rum <- BevagerScraper.Rum.list_from_html(html) do
       IO.write([BevagerScraper.Utils.to_upsert(rum), "\n"])
     end
   end
