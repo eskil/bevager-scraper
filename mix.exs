@@ -3,7 +3,7 @@ defmodule BevagerScraper.Mixfile do
 
   def project do
     [app: :bevager_scraper,
-     version: "0.3.1",
+     version: "0.3.2",
      elixir: "~> 1.3",
      escript: [main_module: Main],
      deps: deps()]
