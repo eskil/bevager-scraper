@@ -3,7 +3,7 @@ defmodule BevagerScraper do
 
   def login(email, password) do
     {:ok, body} = Poison.encode(%{email: email, password: password, programId: 1, referer: "/brg", "rewardsGroupName": "rumbustion"})
-    headers = [{"Content-Type", "application/json"}]
+    headers = ["Content-Type": "application/json"]
     response = HTTPotion.post("https://www.bevager.com/brg/login", [body: body, headers: headers])
     cookie = response.headers["set-cookie"]
     %BevagerScraper{cookie: cookie}
