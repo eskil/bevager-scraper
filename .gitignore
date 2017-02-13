@@ -19,3 +19,4 @@ erl_crash.dump
 *~
 
 /bevager_scraper
+/src/*erl

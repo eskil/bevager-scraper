@@ -1,5 +1,6 @@
 defmodule BevagerScraper.Rum do
-  defstruct name: nil,
+  defstruct remote_id: nil,
+    name: nil,
     raw_name: nil,
     price: nil,
     is_new: nil,
@@ -36,12 +37,6 @@ defmodule BevagerScraper.Rum do
 
   defp parse_historic([class]) do
     "historic-item" in String.split(class)
-  end
-
-  defp parse_price(s) do
-    m = Regex.named_captures(~r/\$(?<price>[0-9]+).*/, s)
-    {price, _} = Integer.parse(m["price"])
-    price
   end
 
   defp parse_is_immortal(name) do
@@ -113,26 +108,35 @@ defmodule BevagerScraper.Rum do
   end
 
   def new_from_floki(html) do
-    #IO.inspect html
-    children = Floki.find(html, "td")
-    {:ok, {"td", _, [p]}} = Enum.fetch(children, 2)
-    price = parse_price(p)
-
-    {:ok, {"td", _, [{_, _, [country]}]}} = Enum.fetch(children, 0)
-    {:ok, {"td", _, stuff}} = Enum.fetch(children, 3)
-    request_status = case Enum.fetch(stuff, 1) do
-                       {:ok, status} -> String.trim(status)
-                       :error -> nil
-                     end
-
     class = Floki.attribute(html, "class")
     is_historic = parse_historic(class)
     requested_at = parse_requested(Floki.attribute(html, "data-requested"))
 
-    # TODO: make a parse_new that returns new and name.
-    [{_, _, [raw_name]}] = Floki.find(html, "a.item-name")
-    raw_name = String.trim(raw_name)
-    name = String.replace(raw_name, "  ", " ", global: true)
+    ##
+    ## Name, price, request_status and country.
+    ##
+    # Find the link to the popup dialog to request/note.
+    [{_, name_attributes, [_name]}] = Floki.find(html, "a.item-name")
+
+    # Parse the javascript call *sigh*.
+    {:ok, tree} = name_attributes
+    |> Enum.into(%{})
+    |> Map.get("ng-click")
+    |> MinimalJsCallParser.parse
+
+    # Pull out the arguments.
+    {:call, _obj, _func, args} = Enum.at(tree, 0)
+    {:int, remote_id} = Enum.at(args, 1)
+    {:string, name} = Enum.at(args, 2)
+    {:string, country} = Enum.at(args, 3)
+    {:string, price} = Enum.at(args, 4)
+    {:string, request_status} = Enum.at(args, 5)
+    # Quotes remain escaped which is a pain.
+    name = String.replace(name, "\\'", "'")
+    raw_name = name
+    # Price to int
+    {price, _} = Float.parse(price)
+
     {state, name} = parse_state(country, name)
     {is_new, name} = parse_is_new(name)
     {is_immortal, name} = parse_is_immortal(name)
@@ -140,6 +144,7 @@ defmodule BevagerScraper.Rum do
     {notes, rating} = parse_notes(Floki.find(html, "div.notes"))
 
     %BevagerScraper.Rum{
+      remote_id: remote_id,
       name: name,
       raw_name: raw_name,
       price: price,

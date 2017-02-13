@@ -60,7 +60,7 @@ defmodule Main do
       aliases: [h: :help]
     )
     case options[:help] do
-      true  -> help
+      true  -> help()
       _ -> {options, args, invalid}
     end
   end
