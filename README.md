@@ -57,16 +57,16 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 First command downloads the html from bevager. Second scrapes it and for now just dumps the rums.
 
    ```
-   %BevagerScraper.Rum{country: "Guadeloupe", is_historic: true,
+   %BevagerScraper.Rum{country: "Guadeloupe", is_available: false,
      is_immortal: false, is_new: false, name: "Domaine de Séverin", notes: nil,
      price: 12, rating: nil, raw_name: "Domaine de Séverin - 1 oz",
      request_status: "M.C", requested_at: ~N[2009-12-08 00:00:00], size: 1}
-   %BevagerScraper.Rum{country: "Antigua and Barbuda", is_historic: false,
+   %BevagerScraper.Rum{country: "Antigua and Barbuda", is_available: true,
      is_immortal: false, is_new: false, name: "English Harbour 25 year 1981",
      notes: "Mild, minor smoke,", price: 45, rating: 3.5,
      raw_name: "English Harbour 25 year 1981", request_status: "M.C",
      requested_at: ~N[2009-12-08 00:00:00], size: 2}
-   %BevagerScraper.Rum{country: "Puerto Rico", is_historic: false,
+   %BevagerScraper.Rum{country: "Puerto Rico", is_available: true,
      is_immortal: true, is_new: false, name: "Don Q Reserva de Familia Serralles",
      notes: nil, price: 140, rating: nil,
      raw_name: "Don Q Reserva de Familia Serralles - 1 oz - Immortal",
@@ -84,13 +84,13 @@ Bevager-scraper has a very simply dump-to-sql upsert feature;
 Which generates SQL ala
 
    ```
-   INSERT INTO rums.basic_rums (name, raw_name, request_status, notes, country, requested_at, rating, size, price, is_new, is_historic, is_immortal) VALUES ("Domaine de Séverin", "Domaine de Séverin - 1 oz", "M.C", NULL, "Guadeloupe", "2009-12-08 00:00:00", NULL, 1, 12, false, true, false)
+   INSERT INTO rums.basic_rums (name, raw_name, request_status, notes, country, requested_at, rating, size, price, is_new, is_available, is_immortal) VALUES ("Domaine de Séverin", "Domaine de Séverin - 1 oz", "M.C", NULL, "Guadeloupe", "2009-12-08 00:00:00", NULL, 1, 12, false, false, false)
 ON DUPLICATE KEY UPDATE
-request_status="M.C", notes=NULL, requested_at="2009-12-08 00:00:00", is_historic=true, is_immortal=false, is_new=false, rating=NULL, size=1, price=12;
+request_status="M.C", notes=NULL, requested_at="2009-12-08 00:00:00", is_available=false, is_immortal=false, is_new=false, rating=NULL, size=1, price=12;
 
-   INSERT INTO rums.basic_rums (name, raw_name, request_status, notes, country, requested_at, rating, size, price, is_new, is_historic, is_immortal) VALUES ("English Harbour 10 year", "English Harbour 10 year", "M.C", "Raisins, \"something scribbles\" but sweet,", "Antigua and Barbuda", "2009-12-08 00:00:00", 3.0, 2, 26, false, true, false)
+   INSERT INTO rums.basic_rums (name, raw_name, request_status, notes, country, requested_at, rating, size, price, is_new, is_available, is_immortal) VALUES ("English Harbour 10 year", "English Harbour 10 year", "M.C", "Raisins, \"something scribbles\" but sweet,", "Antigua and Barbuda", "2009-12-08 00:00:00", 3.0, 2, 26, false, false, false)
    ON DUPLICATE KEY UPDATE
-   request_status="M.C", notes="Raisins, \"something scribbles\" but sweet,", requested_at="2009-12-08 00:00:00", is_historic=true, is_immortal=false, is_new=false, rating=3.0, size=2, price=26;
+   request_status="M.C", notes="Raisins, \"something scribbles\" but sweet,", requested_at="2009-12-08 00:00:00", is_available=false, is_immortal=false, is_new=false, rating=3.0, size=2, price=26;
    ```
 
 Which will work with the following table definition.
@@ -102,7 +102,7 @@ Which will work with the following table definition.
      `raw_name` VARCHAR(256) NOT NULL,
      `price` INT(4),
      `is_new` BOOL DEFAULT FALSE,
-     `is_historic` BOOL DEFAULT FALSE,
+     `is_available` BOOL DEFAULT FALSE,
      `is_immortal` BOOL DEFAULT FALSE,
      requested_at DATETIME DEFAULT NULL,
      request_status VARCHAR(20) DEFAULT NULL,

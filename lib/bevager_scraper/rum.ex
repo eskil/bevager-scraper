@@ -4,7 +4,7 @@ defmodule BevagerScraper.Rum do
     raw_name: nil,
     price: nil,
     is_new: nil,
-    is_historic: nil,
+    is_available: nil,
     is_immortal: nil,
     requested_at: nil,
     request_status: nil,
@@ -33,10 +33,6 @@ defmodule BevagerScraper.Rum do
         {:ok, dt} = Timex.parse(s, "%m/%e/%y", :strftime)
         dt
     end
-  end
-
-  defp parse_historic([class]) do
-    "historic-item" in String.split(class)
   end
 
   defp parse_is_immortal(name) do
@@ -108,8 +104,6 @@ defmodule BevagerScraper.Rum do
   end
 
   def new_from_floki(html) do
-    class = Floki.attribute(html, "class")
-    is_historic = parse_historic(class)
     requested_at = parse_requested(Floki.attribute(html, "data-requested"))
 
     ##
@@ -131,6 +125,7 @@ defmodule BevagerScraper.Rum do
     {:string, country} = Enum.at(args, 3)
     {:string, price} = Enum.at(args, 4)
     {:string, request_status} = Enum.at(args, 5)
+    {:boolean, is_available} = Enum.at(args, 6)
     # Quotes remain escaped which is a pain.
     name = String.replace(name, "\\'", "'")
     raw_name = name
@@ -149,7 +144,7 @@ defmodule BevagerScraper.Rum do
       raw_name: raw_name,
       price: price,
       is_new: is_new,
-      is_historic: is_historic,
+      is_available: is_available,
       is_immortal: is_immortal,
       requested_at: requested_at,
       request_status: request_status,
