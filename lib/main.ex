@@ -30,6 +30,8 @@ defmodule Main do
 
   def process({options, ["dump"], _invalid}) do
     {:ok, html} = File.read(options[:file])
+    user = BevagerScraper.User.new_from_html(html)
+    IO.inspect user
     for rum <- BevagerScraper.Rum.list_from_html(html) do
       IO.inspect rum
     end
